@@ -43,12 +43,10 @@
             }).catch(err => {
                 // Fallback to clipboard
                 navigator.clipboard.writeText(resultText);
-                alert('Results copied to clipboard!');
             });
         } else {
             // Fallback to clipboard
             navigator.clipboard.writeText(resultText);
-            alert('Results copied to clipboard!');
         }
     };
 </script>
