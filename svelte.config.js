@@ -8,7 +8,7 @@ const config = {
       fallback: null, // Optional: specify a fallback file (404.html)
     }),
     paths: {
-      base: '/lebowdecisionmaker.github.io/',  // Replace 'repo-name' with your actual GitHub repository name
+      base: '/',  // Replace 'repo-name' with your actual GitHub repository name
     },
     prerender: {
       default: false,  // Enable prerendering for all pages
