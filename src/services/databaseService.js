@@ -126,3 +126,17 @@ export const deleteQuestion = async (questionId) => {
     throw error;
   }
 };
+
+export const updateQuestion = async (questionId, questionData) => {
+  try {
+    await updateDoc(doc(db, "questions", questionId), {
+      question: questionData.question,
+      buttons: questionData.buttons,
+      updatedAt: new Date()
+    });
+    return true;
+  } catch (error) {
+    console.error("Error updating question:", error);
+    throw error;
+  }
+};

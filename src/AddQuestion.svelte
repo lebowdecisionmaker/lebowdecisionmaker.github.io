@@ -7,7 +7,8 @@
         deleteSurvey,
         addQuestion,
         getQuestionsForSurvey,
-        deleteQuestion
+        deleteQuestion,
+        updateQuestion
     } from './services/databaseService';
     import { onMount } from 'svelte';
 
@@ -30,6 +31,9 @@
     let isSurveyNameAdded = writable(false);
     let showSurveySelection = true;
 
+    let editingQuestion = null;
+    let editingQuestionId = null;
+
     // Load existing surveys on mount
     onMount(async () => {
         await loadSurveys();
@@ -44,6 +48,32 @@
             console.error("Error loading surveys:", error);
             isLoading = false;
         }
+    };
+
+    const editQuestion = (q) => {
+        editingQuestionId = q.id;
+        question = q.question;
+        numOptions = q.buttons.length;
+        
+        // Initialize buttons with the question's existing buttons
+        buttons = q.buttons.map(btn => {
+            // Map selected topics back to indices
+            const selectedTopics = new Array(topics.length).fill(false);
+            btn.selectedTopics.forEach(topic => {
+            const index = topics.indexOf(topic);
+            if (index !== -1) {
+                selectedTopics[index] = true;
+            }
+            });
+            
+            return {
+            text: btn.text,
+            selectedTopics: selectedTopics
+            };
+        });
+        
+    showAddQuestionForm = true;
+    editingQuestion = q;
     };
 
     const createNewSurvey = () => {
@@ -172,34 +202,47 @@
         }
     };
 
-    const addQuestionHandler = async () => {
+    const addOrUpdateQuestion = async () => {
         if (question && buttons.every(btn => btn.text && btn.selectedTopics.some(t => t))) {
             try {
                 isLoading = true;
                 const questionData = {
                     question,
                     buttons: buttons.map(btn => ({
-                        text: btn.text,
-                        selectedTopics: topics.filter((_, index) => btn.selectedTopics[index])
+                    text: btn.text,
+                    selectedTopics: topics.filter((_, index) => btn.selectedTopics[index])
                     }))
                 };
                 
-                await addQuestion(selectedSurveyId, questionData);
+                if (editingQuestionId) {
+                    await updateQuestion(editingQuestionId, questionData);
+                } else {
+                    await addQuestion(selectedSurveyId, questionData);
+                }
                 
-                // Reload questions
                 existingQuestions = await getQuestionsForSurvey(selectedSurveyId);
                 
                 question = '';
+                editingQuestionId = null;
+                editingQuestion = null;
                 initializeButtons();
                 showAddQuestionForm = false;
                 isLoading = false;
             } catch (error) {
-                console.error("Error adding question:", error);
+                console.error(editingQuestionId ? "Error updating question:" : "Error adding question:", error);
                 isLoading = false;
             }
         } else {
             alert('Please fill in all fields and select at least one topic per button');
         }
+    };
+
+    const cancelEditing = () => {
+        question = '';
+        editingQuestionId = null;
+        editingQuestion = null;
+        initializeButtons();
+        showAddQuestionForm = false;
     };
 
     const handleNumTopicsChange = () => {
@@ -322,12 +365,13 @@
                     {#if existingQuestions.length > 0}
                         <h3>Questions</h3>
                         {#each existingQuestions as q, index}
-                            <div class="question-item">
-                                <span class="question-text">{q.question}</span>
-                                <div class="question-actions">
-                                    <button class="delete" on:click={() => deleteQuestionHandler(q.id)}>Delete</button>
-                                </div>
+                        <div class="question-item">
+                            <span class="question-text">{q.question}</span>
+                            <div class="question-actions">
+                                <button on:click={() => editQuestion(q)}>Edit</button>
+                                <button class="delete" on:click={() => deleteQuestionHandler(q.id)}>Delete</button>
                             </div>
+                        </div>
                         {/each}
                     {:else}
                         <p class="no-questions">No questions added yet.</p>
@@ -335,8 +379,8 @@
                 </div>
             {:else}
                 <div class="add-question-container">
-                    <button class="back-button" on:click={toggleAddQuestionForm}>← Back to Questions</button>
-                    <h2>Add a New Question to "{surveyName}"</h2>
+                    <button class="back-button" on:click={cancelEditing}>← Back to Questions</button>
+                    <h2>{editingQuestionId ? 'Edit' : 'Add a New'} Question for "{surveyName}"</h2>
                     <input type="text" bind:value={question} placeholder="Enter your question" />
 
                     <div class="options-count">
@@ -375,7 +419,9 @@
                         {/each}
                     </div>
 
-                    <button on:click={addQuestionHandler}>Add Question</button>
+                    <button on:click={addOrUpdateQuestion}>
+                        {editingQuestionId ? 'Update' : 'Add'} Question
+                    </button>
                 </div>
             {/if}
         </div>
