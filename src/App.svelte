@@ -60,7 +60,7 @@
 {:else}
   <div class="app-container">
     <div>
-        <img src="src/assets/lebow.png" alt="lebow logo">
+        <img src="/lebow.png" alt="lebow logo">
     </div>
     <h1>LeBow Decision Aid</h1>
     <h3>
