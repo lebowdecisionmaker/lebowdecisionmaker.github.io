@@ -59,6 +59,9 @@
   <div class="loading">Loading app...</div>
 {:else}
   <div class="app-container">
+    <div>
+        <img src="src/assets/lebow.png" alt="lebow logo">
+    </div>
     <h1>LeBow Decision Aid</h1>
     <h3>
         Welcome to the Drexel LeBow Decision-Maker! Please answer the following questions to help us provide you with the best suggestion based on your choices and goals. 
@@ -110,6 +113,10 @@
 
     h3 {
         font-weight: normal;
+    }
+
+    img {
+        height: 150px;
     }
 
   .nav-buttons {

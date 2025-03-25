@@ -259,6 +259,7 @@
         display: flex;
         gap: 1rem;
         margin-top: 1rem;
+        align-content: center;
     }
 
     .restart-button {
