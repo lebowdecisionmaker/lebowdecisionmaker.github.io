@@ -59,7 +59,7 @@
   <div class="loading">Loading app...</div>
 {:else}
   <div class="app-container">
-    <h1>Lebow Decision Maker</h1>
+    <h1>Lebow Decision Aid</h1>
     <div class="nav-buttons">
       <button on:click={navigateToMain}>Home</button>
       <button on:click={() => currentPage.set('add')}>Add or Edit Surveys</button>
