@@ -158,7 +158,7 @@
         />
     {:else if !selectedSurvey}
         <div class="survey-selection">
-            <h2>Select a Survey</h2>
+            <h2>Select a Decision Aid</h2>
             {#if surveys.length > 0}
                 <div class="survey-list">
                     {#each surveys as survey}
