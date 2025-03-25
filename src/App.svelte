@@ -59,7 +59,10 @@
   <div class="loading">Loading app...</div>
 {:else}
   <div class="app-container">
-    <h1>Lebow Decision Aid</h1>
+    <h1>LeBow Decision Aid</h1>
+    <h3>
+        Welcome to the Drexel LeBow Decision-Maker! Please answer the following questions to help us provide you with the best suggestion based on your choices and goals. 
+    </h3>
     <div class="nav-buttons">
       <button on:click={navigateToMain}>Home</button>
       <button on:click={() => currentPage.set('add')}>Add or Edit Surveys</button>
@@ -105,6 +108,10 @@
     color: rgba(255, 255, 255, 0.87);
   }
 
+    h3 {
+        font-weight: normal;
+    }
+
   .nav-buttons {
     display: flex;
     justify-content: center;
@@ -144,7 +151,7 @@
   }
 
   button:hover {
-    border-color: #646cff;
+    border-color: #FFBD2D;
   }
 
   button:focus,
@@ -154,20 +161,20 @@
 
   .password-check button {
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #FFBD2D;
     color: white;
     border: none;
     cursor: pointer;
   }
 
   .password-check button:hover {
-    background-color: #0056b3;
+    background-color: #FFBD2D;
   }
 
   @media (prefers-color-scheme: light) {
     button {
       background-color: #f9f9f9;
-      color: #213547;
+      color: #FFBD2D;
     }
 
     h1 {

@@ -259,7 +259,7 @@
     .survey-button {
         padding: 1rem 2rem;
         font-size: 1.1rem;
-        background-color: #007bff;
+        background-color: #1a1a1a;
         color: white;
         border: none;
         border-radius: 8px;
@@ -268,7 +268,7 @@
     }
 
     .survey-button:hover {
-        background-color: #0056b3;
+        background-color: #FFBD2D;
     }
 
     .main-content {
@@ -307,7 +307,7 @@
 
     button {
         padding: 10px 20px;
-        background-color: #007bff;
+        background-color: #1a1a1a;
         color: white;
         border: none;
         cursor: pointer;
@@ -318,7 +318,7 @@
     }
 
     button:hover {
-        background-color: #0056b3;
+        background-color: #FFBD2D;
     }
 
     .progress {

@@ -53,6 +53,31 @@
 
 <div class="results-container">
     <h1>Your Results for "{surveyName}"</h1>
+
+        <div class="conclusion">
+        {#if Object.entries(topicResults).length > 0}
+            {@const maxScore = Math.max(...Object.values(topicResults).map(r => r.count))}
+            {@const topChoices = Object.entries(topicResults)
+                .filter(([_, result]) => result.count === maxScore)
+                .map(([topic]) => topic)}
+            
+            <h2>Conclusion</h2>
+            {#if topChoices.length === 1}
+                <p>You are most suited for <strong>{topChoices[0]}</strong></p>
+            {:else}
+                <p>
+                    You are equally suited for 
+                    {#if topChoices.length === 2}
+                        <strong>{topChoices[0]}</strong> and <strong>{topChoices[1]}</strong>
+                    {:else}
+                        {#each topChoices as choice, i}
+                            <strong>{choice}</strong>{#if i < topChoices.length - 2}, {/if}{#if i === topChoices.length - 2} and {/if}
+                        {/each}
+                    {/if}
+                </p>
+            {/if}
+        {/if}
+    </div>
     
     <div class="results-grid">
         {#each Object.entries(topicResults) as [topic, result]}
@@ -81,31 +106,6 @@
                 </div>
             </div>
         {/each}
-    </div>
-
-    <div class="conclusion">
-        {#if Object.entries(topicResults).length > 0}
-            {@const maxScore = Math.max(...Object.values(topicResults).map(r => r.count))}
-            {@const topChoices = Object.entries(topicResults)
-                .filter(([_, result]) => result.count === maxScore)
-                .map(([topic]) => topic)}
-            
-            <h2>Conclusion</h2>
-            {#if topChoices.length === 1}
-                <p>You are most suited for <strong>{topChoices[0]}</strong></p>
-            {:else}
-                <p>
-                    You are equally suited for 
-                    {#if topChoices.length === 2}
-                        <strong>{topChoices[0]}</strong> and <strong>{topChoices[1]}</strong>
-                    {:else}
-                        {#each topChoices as choice, i}
-                            <strong>{choice}</strong>{#if i < topChoices.length - 2}, {/if}{#if i === topChoices.length - 2} and {/if}
-                        {/each}
-                    {/if}
-                </p>
-            {/if}
-        {/if}
     </div>
 
     <div class="action-buttons">
@@ -173,7 +173,7 @@
     .percentage-fill {
         width: var(--percentage);
         height: 100%;
-        background: #646cff;
+        background: #FFBD2D;
         transition: width 1s ease-in-out;
     }
 
@@ -252,7 +252,7 @@
     }
 
     .conclusion strong {
-        color: #646cff;
+        color: #FFBD2D;
     }
 
     .action-buttons {
