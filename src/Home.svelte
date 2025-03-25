@@ -289,6 +289,7 @@
         color: rgba(255, 255, 255, 0.87);
         text-align: center;
         margin: 0;
+        font-weight: normal;
     }
 
     h3 {
