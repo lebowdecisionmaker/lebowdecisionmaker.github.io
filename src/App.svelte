@@ -55,6 +55,18 @@
   }
 </script>
 
+<svelte:head>
+    <style>
+        body {
+            background-color: #002543; /* Dark blue-ish charcoal */
+            color: rgba(255, 255, 255, 0.87); /* Default text color for dark mode */
+            margin: 0; /* Good practice to reset body margin */
+            font-family: inherit; /* Ensure consistent font if you set one on a wrapper */
+            min-height: 100vh; /* Ensure body takes at least full viewport height */
+        }
+    </style>
+</svelte:head>
+
 {#if isLoading}
   <div class="loading">Loading app...</div>
 {:else}
@@ -68,7 +80,7 @@
     </h3>
     <div class="nav-buttons">
       <button on:click={navigateToMain}>Home</button>
-      <button on:click={() => currentPage.set('add')}>Add or Edit Surveys</button>
+      <button on:click={() => currentPage.set('add')}>Add/Edit/Analyze Surveys</button>
     </div>
 
     {#if !$isPasswordCorrect && $currentPage === 'add'}
@@ -176,22 +188,5 @@
 
   .password-check button:hover {
     background-color: #FFBD2D;
-  }
-
-  @media (prefers-color-scheme: light) {
-    button {
-      background-color: #f9f9f9;
-      color: #FFBD2D;
-    }
-
-    h1 {
-      color: #213547;
-    }
-
-    .password-check input {
-      background-color: white;
-      border-color: #ddd;
-      color: #213547;
-    }
   }
 </style>

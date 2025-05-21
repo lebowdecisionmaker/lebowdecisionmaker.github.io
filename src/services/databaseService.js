@@ -1,21 +1,20 @@
-import { db } from '../firebase';
-import { 
-  collection, 
-  doc, 
-  setDoc, 
-  addDoc, 
-  getDoc, 
-  getDocs, 
-  updateDoc, 
-  deleteDoc, 
+// src/services/databaseService.js
+import { db } from '../firebase'; // Ensure this path is correct
+import {
+  collection,
+  doc,
+  addDoc,
+  getDoc,
+  getDocs,
+  updateDoc,
+  deleteDoc,
   query,
-  where 
+  where
 } from 'firebase/firestore';
 
-// Survey operations
+// ... (all your existing functions: createSurvey, getAllSurveys, etc.) ...
 export const createSurvey = async (surveyData) => {
   try {
-    // Add a new document with a generated id
     const docRef = await addDoc(collection(db, "surveys"), {
       name: surveyData.name,
       topics: surveyData.topics,
@@ -45,7 +44,7 @@ export const getSurveyById = async (surveyId) => {
   try {
     const docRef = doc(db, "surveys", surveyId);
     const docSnap = await getDoc(docRef);
-    
+
     if (docSnap.exists()) {
       return {
         id: docSnap.id,
@@ -62,28 +61,27 @@ export const getSurveyById = async (surveyId) => {
 
 export const deleteSurvey = async (surveyId) => {
   try {
-    // First get all questions for this survey
     const questionsSnapshot = await getDocs(
       query(collection(db, "questions"), where("surveyId", "==", surveyId))
     );
-    
-    // Delete all questions
-    const deleteQuestions = questionsSnapshot.docs.map(doc => 
-      deleteDoc(doc.ref)
+    const deleteQuestions = questionsSnapshot.docs.map(qDoc =>
+      deleteDoc(qDoc.ref)
     );
-    
     await Promise.all(deleteQuestions);
-    
-    // Then delete the survey
     await deleteDoc(doc(db, "surveys", surveyId));
+    // Also delete associated user submissions (optional, but good practice for cleanup)
+    const submissionsQuery = query(collection(db, "users"), where("surveyId", "==", surveyId));
+    const submissionsSnapshot = await getDocs(submissionsQuery);
+    const deleteSubmissions = submissionsSnapshot.docs.map(subDoc => deleteDoc(subDoc.ref));
+    await Promise.all(deleteSubmissions);
+    console.log(`Deleted survey ${surveyId} and its associated questions and user submissions.`);
     return true;
   } catch (error) {
-    console.error("Error deleting survey: ", error);
+    console.error("Error deleting survey and associated data:", error);
     throw error;
   }
 };
 
-// Question operations
 export const addQuestion = async (surveyId, questionData) => {
   try {
     const docRef = await addDoc(collection(db, "questions"), {
@@ -102,14 +100,13 @@ export const addQuestion = async (surveyId, questionData) => {
 export const getQuestionsForSurvey = async (surveyId) => {
   try {
     const q = query(
-      collection(db, "questions"), 
+      collection(db, "questions"),
       where("surveyId", "==", surveyId)
     );
-    
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
+    return querySnapshot.docs.map(qDoc => ({
+      id: qDoc.id,
+      ...qDoc.data()
     }));
   } catch (error) {
     console.error("Error getting questions: ", error);
@@ -137,6 +134,41 @@ export const updateQuestion = async (questionId, questionData) => {
     return true;
   } catch (error) {
     console.error("Error updating question:", error);
+    throw error;
+  }
+};
+
+export const saveUserSurveySubmission = async (submissionData) => {
+  try {
+    const docRef = await addDoc(collection(db, "users"), {
+      surveyId: submissionData.surveyId,
+      surveyName: submissionData.surveyName,
+      userName: submissionData.userName,
+      userEmail: submissionData.userEmail,
+      topicResults: submissionData.topicResults,
+      answerHistory: submissionData.answerHistory,
+      finalResult: submissionData.finalResult,
+      submittedAt: new Date()
+    });
+    console.log("User survey submission saved with ID: ", docRef.id);
+    return docRef.id;
+  } catch (error) {
+    console.error("Error saving user survey submission: ", error);
+    throw error;
+  }
+};
+
+// NEW FUNCTION to get submissions for a specific survey
+export const getSurveySubmissions = async (surveyId) => {
+  try {
+    const q = query(collection(db, "users"), where("surveyId", "==", surveyId));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    console.error(`Error getting submissions for survey ${surveyId}:`, error);
     throw error;
   }
 };
